@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 50px auto;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .selectNumber{
+            margin: 5px auto;
+            text-align: center;
+        }
+        .content {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        input{
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<div class="selectNumber">
+    <input type="number" id="num" max="8" min="3">
+    <button id="start">start</button>
+</div>
+<div class="container"></div>
+<script src="jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#start').click(function () {
+            var matrix = +$('#num').val();
+            if (matrix < 3 || matrix > 8){
+                alert('use numbers between 3, 8');
+            } else {
+                $('.container').empty();
+                $('.container').css({width: matrix*100, height: matrix*100});
+                matrix = Math.pow(matrix,2);
+                createMatrix(matrix);
+            }
+        });
+        function createMatrix(num) {
+            for (let i = 0; i < num; i++) {
+                $('<div/>', {
+                    "class": 'content',
+                }).appendTo('.container');
+            }
+            let start = 0, content = $('.content'), key = Math.sqrt(content.length);
+            content.click(function () {
+                if ($(this).text().length === 0) {
+                    $(this).text(start);
+                    checkRowWinner();
+                    checkColWinner();
+                    checkDiagonalWinner();
+                    start = start === 0 ? 'X' : 0;
+                }
+            });
+            function checkRowWinner() {
+                for (let i = 0; i < content.length; i += key) {
+                    let row = content.slice(i, i + key);
+                    let values = [];
+                    for (let j = 0; j < row.length; j++) {
+                        values.push(row.eq(j).text());
+                    }
+                    values = $.unique(values);
+                    if (values.length === 1) {
+                        alertMessage(values[0]);
+                        break;
+                    }
+                }
+            }
+            function checkColWinner() {
+                for (let i = 0; i < key; i++) {
+                    let values = [];
+                    for (let j = i; j < content.length; j+=key) {
+                        values.push(content.eq(j).text());
+                    }
+                    values = $.unique(values);
+                    if (values.length === 1) {
+                        alertMessage(values[0]);
+                        break;
+                    }
+                }
+            }
+            function checkDiagonalWinner() {
+                for (let i = 0; i < key; i+=key-1) {
+                    let values = [];
+                    let keyDiagonal = i > 0 ? key-1 : key+1;
+                    for (let j = i; j < content.length; j+=keyDiagonal) {
+                        values.push(content.eq(j).text());
+                        if (values.length >= key){
+                            break;
+                        }
+                    }
+                    values = $.unique(values);
+                    if (values.length === 1) {
+                        alertMessage(values[0]);
+                        break;
+                    }
+                }
+            }
+            function alertMessage(winner) {
+                alert('won: ' + winner);
+                content.each(function (i, elem) {
+                    $(elem).empty();
+                });
+                start = winner;
+            }
+        }
+    })
+</script>
+</body>
+</html>
