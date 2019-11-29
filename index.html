@@ -10,12 +10,10 @@
         * {
             box-sizing: border-box;
         }
-
         body {
             margin: 0;
             padding: 0;
         }
-
         .container {
             margin: 50px auto;
             display: flex;
@@ -71,6 +69,7 @@
                     checkRowWinner();
                     checkColWinner();
                     checkDiagonalWinner();
+                    checkDraw();
                     start = start === 0 ? 'X' : 0;
                 }
             });
@@ -83,7 +82,7 @@
                     }
                     values = $.unique(values);
                     if (values.length === 1) {
-                        alertMessage(values[0]);
+                        alertMessage('congratulations: ', values[0]);
                         break;
                     }
                 }
@@ -96,7 +95,7 @@
                     }
                     values = $.unique(values);
                     if (values.length === 1) {
-                        alertMessage(values[0]);
+                        alertMessage('congratulations: ', values[0]);
                         break;
                     }
                 }
@@ -113,13 +112,24 @@
                     }
                     values = $.unique(values);
                     if (values.length === 1) {
-                        alertMessage(values[0]);
+                        alertMessage('congratulations: ', values[0]);
                         break;
                     }
                 }
             }
-            function alertMessage(winner) {
-                alert('won: ' + winner);
+            function checkDraw() {
+                let all = [];
+                for (let i = 0; i < content.length; i++) {
+                    if (content.eq(i).text().length !== 0){
+                        all.push(content.eq(i).text());
+                    }
+                }
+                if (all.length === content.length){
+                    alertMessage('', 'WOW congratulations! lets play again');
+                }
+            }
+            function alertMessage(message, winner) {
+                alert(message + winner);
                 content.each(function (i, elem) {
                     $(elem).empty();
                 });
